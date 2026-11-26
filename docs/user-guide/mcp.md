@@ -20,6 +20,20 @@ endpoint, API-token authentication, ORM models, and PostgreSQL database are reus
 The tools read configuration directly through the ORM; they do not call the REST
 API or access live tracking state.
 
+### Relationship to the REST API
+
+The MCP endpoint deliberately uses a different API design from Manager's REST
+endpoints. It is mounted at `/mcp` rather than under `/api/v1`, and uses MCP's
+JSON-RPC methods, tool schemas, and response formats instead of REST resource
+paths and representations. These differences are intentional to support MCP
+clients. Existing REST endpoints keep their own contracts.
+
+Manager's OpenAPI document and `make check-manager-contract` cover the
+`/api/v1` REST API; they do not currently describe or validate `/mcp`. The
+MCP tool schemas and the tests in `manager/tests/mcp_server` and
+`tests/sscape_tests/mcp_server` cover the MCP interface separately. Whether
+the MCP endpoint should also be represented in OpenAPI is a maintainer decision.
+
 ## Why MCP for agents?
 
 MCP lets agents discover tool descriptions and schemas through `tools/list`,
@@ -53,10 +67,10 @@ Active authenticated users can use the exposed MCP tools.
 This initial PR provides just two read-only tools to get started with persisted
 scene configuration:
 
-| Tool          | Arguments                  | Result                            |
-| ------------- | -------------------------- | --------------------------------- |
-| `list_scenes` | Optional `limit`, `page`   | Scene summaries and `next_page`   |
-| `get_scene`   | Required `scene_id` UUID   | One scene summary                 |
+| Tool          | Arguments                | Result                          |
+| ------------- | ------------------------ | ------------------------------- |
+| `list_scenes` | Optional `limit`, `page` | Scene summaries and `next_page` |
+| `get_scene`   | Required `scene_id` UUID | One scene summary               |
 
 Example: list up to 10 scenes.
 
